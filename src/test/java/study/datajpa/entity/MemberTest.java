@@ -37,7 +37,7 @@ class MemberTest {
         em.persist(member4);
 
         em.flush();
-        em.close();
+        em.clear();
 
         List<Member> members = em.createQuery("select m from Member m ", Member.class).getResultList();
 
