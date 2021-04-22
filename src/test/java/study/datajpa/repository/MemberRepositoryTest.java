@@ -1,6 +1,5 @@
 package study.datajpa.repository;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,7 +9,6 @@ import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
-import javax.swing.text.html.Option;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -156,7 +154,7 @@ class MemberRepositoryTest {
 
     }
 
-    @Test
+    @Test()
     public void returnType(){
         Member m1 = new Member("AAA",10);
         Member m2 = new Member("BBB",20);
@@ -177,6 +175,7 @@ class MemberRepositoryTest {
         // optional에서 단건조회일때, 결과가 단건이 아닌경우(=여러개인경우, Exception(=IncorrectResultSizeDataAccessException) 발생)
         Member m3 = new Member("AAA",20);
         memberRepository.save(m3);
+
 
         findMemberOptional = memberRepository.findOptionalByUsername("AAA");
 
