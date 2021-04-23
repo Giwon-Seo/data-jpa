@@ -3,6 +3,10 @@ package study.datajpa.repository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
@@ -179,6 +183,56 @@ class MemberRepositoryTest {
 
         findMemberOptional = memberRepository.findOptionalByUsername("AAA");
 
+    }
 
+
+    @Test
+    public void paging(){
+
+        // give
+        memberRepository.save(new Member("member1", 10 ));
+        memberRepository.save(new Member("member2", 10 ));
+        memberRepository.save(new Member("member3", 10 ));
+        memberRepository.save(new Member("member4", 10 ));
+        memberRepository.save(new Member("member5", 10 ));
+
+        int age = 10;
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username"));
+
+        // when
+        // Return Type : Page
+        // 일반직인 게시물의 페이지 형식
+        // 특징 : count 쿼리를 한번더 실행한다. ( 페이징을 위한 쿼리 )
+        Page<Member> page = memberRepository.findByAge(age, pageRequest);
+
+        // 엔티티를 DTO로 변환
+        Page<MemberDto> toMap = page.map(m -> new MemberDto(m.getId(), m.getUsername(), null));
+
+        // then
+        List<Member> content = page.getContent(); 
+        long totalElements = page.getTotalElements();
+
+        assertThat(content.size()).isEqualTo(3);
+        assertThat(page.getTotalElements()).isEqualTo(5);
+        assertThat(page.getNumber()).isEqualTo(0); // 페이지 번호 주의! 페이지 index는 0부터 시작!!
+        assertThat(page.getTotalPages()).isEqualTo(2);
+        assertThat(page.isFirst()).isTrue();
+        assertThat(page.hasNext()).isTrue();
+
+        // Return Type : Slice
+        // 페이지 형식이 아니고, 다음에 있는 게시물을 가져오는 용도로 사용용
+        // 특징 : limit 갯수를 하나더 가져온다 -> '더보기'기능을 이용하기 위해서서
+        /*
+        Slice<Member> slice = memberRepository.findByAge(age,pageRequest);
+
+        List<Member> content = slice.getContent();
+        assertThat(content.size()).isEqualTo(3);
+        assertThat(slice.getNumber()).isEqualTo(0); // 페이지 번호
+        assertThat(slice.hasNext()).isTrue();
+        */
+
+        // Return Type : List
+        // 그냥 내가 원하는 리스트만 가져오고 싶을때 사용
+        // List<Member> memberList = memberRepository.findByAge(age,pageRequest);
     }
 }
