@@ -13,6 +13,13 @@ spring:
         format_sql: true # sql 이쁘게 나오게 하기
     open-in-view: false
 
+  data:
+    web:
+      pageable:
+        default-page-size: 10
+        max-page-size: 2000
+        #one-indexed-parameters: true # page index를 0이아닌 1로 시작
+
 logging.level:
   org.hibernate.SQL: debug # 로그 남기기
 #  org.hibernate.type: trace # 바인딩된 파라미터 보여주는 옵션
